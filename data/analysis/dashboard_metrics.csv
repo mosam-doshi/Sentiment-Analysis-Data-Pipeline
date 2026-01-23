@@ -1,0 +1,444 @@
+metric_type,dimension,value,count
+sentiment,neutral,,409
+sentiment,positive,,334
+sentiment,negative,,192
+topic,CBSE Exams,0.04,
+topic,College Festivals India,0.06,
+topic,Digital India,0.14,
+topic,GenZ India,0.1,
+topic,Gig Economy India,0.0,
+topic,India Entrepreneurship,0.22,
+topic,India Fashion Trends,0.05,
+topic,India Skill Development,0.21,
+topic,India Tech Startups,0.13,
+topic,Indian Gamers,0.17,
+topic,Indian Youth,0.08,
+topic,Instagram India,0.08,
+topic,Mental Health India,-0.02,
+topic,Student Life India,-0.1,
+topic,Twitter India trends,0.03,
+topic,UPSC Aspirants,0.04,
+hour,0,,30
+hour,1,,29
+hour,2,,30
+hour,3,,38
+hour,4,,37
+hour,5,,63
+hour,6,,63
+hour,7,,59
+hour,8,,63
+hour,9,,53
+hour,10,,57
+hour,11,,69
+hour,12,,64
+hour,13,,40
+hour,14,,42
+hour,15,,36
+hour,16,,29
+hour,17,,25
+hour,18,,21
+hour,19,,23
+hour,20,,16
+hour,21,,9
+hour,22,,19
+hour,23,,20
+source,:: India News Calling ::-positive,,1
+source,ABP Live English-negative,,2
+source,ANI News-negative,,1
+source,ANI News-neutral,,5
+source,ANI News-positive,,6
+source,Adda247-negative,,1
+source,Adda247-neutral,,2
+source,Adgully.com-neutral,,3
+source,Analytics India Magazine-positive,,1
+source,Architectural Digest India-neutral,,1
+source,Asia Insurance Review-neutral,,1
+source,Asianet Newsable-neutral,,1
+source,Awaz The Voice-neutral,,1
+source,Awaz The Voice-positive,,1
+source,Azat TV-neutral,,1
+source,BBC-positive,,1
+source,BW Disrupt-positive,,1
+source,BW Education-negative,,1
+source,BW Education-positive,,1
+source,BW Healthcare World-positive,,1
+source,BW People-negative,,1
+source,Babushahi.com-positive,,1
+source,Bhaskar English-positive,,1
+source,Bisinfotech-neutral,,1
+source,British Psychological Society-positive,,1
+source,Business Connect Magazine-positive,,1
+source,Business Outreach Magazine-positive,,1
+source,Business Recorder-negative,,1
+source,Business Remedies-neutral,,1
+source,Business Remedies-positive,,1
+source,Business Standard-negative,,3
+source,Business Standard-neutral,,6
+source,Business Standard-positive,,7
+source,Business Today-neutral,,3
+source,Business Viewpoint Magazine-neutral,,1
+source,CII Blog-neutral,,1
+source,CNBC TV18-positive,,2
+source,CXO Digitalpulse-neutral,,1
+source,Campaign India-positive,,1
+source,Capitalfm.co.ke-negative,,1
+source,Career Power-neutral,,2
+source,Careers360-neutral,,1
+source,Careers360-positive,,1
+source,Cityairnews-neutral,,1
+source,Complex-negative,,1
+source,Construction World India-positive,,1
+source,Countercurrents.org-positive,,1
+source,CricTracker Hindi-neutral,,2
+source,CryptoRank-positive,,1
+source,DD News-neutral,,1
+source,DD News-positive,,3
+source,DNA India-neutral,,1
+source,DT Next-negative,,1
+source,Daily Excelsior-negative,,1
+source,Dainik Bhaskar-neutral,,1
+source,Dainik Jagran MP CG-positive,,3
+source,Deccan Chronicle-neutral,,1
+source,Deccan Herald-negative,,3
+source,Deccan Herald-neutral,,2
+source,Devdiscourse-negative,,1
+source,Devdiscourse-neutral,,5
+source,Devdiscourse-positive,,7
+source,Digital Health News-neutral,,2
+source,ED Times-negative,,1
+source,ED Times-positive,,1
+source,ENA English-positive,,1
+source,ET BrandEquity-neutral,,1
+source,ET Edge Insights-neutral,,1
+source,ET Edge Insights-positive,,6
+source,ET Education-neutral,,1
+source,ET Now-neutral,,1
+source,ET TravelWorld-positive,,1
+source,ETHRWorld.com-neutral,,1
+source,ETV Bharat-neutral,,2
+source,ETV Bharat-positive,,2
+source,EasternEye-positive,,1
+source,EdexLive-neutral,,2
+source,EdexLive-positive,,1
+source,Education Times-neutral,,3
+source,Education Times-positive,,3
+source,Elle India-neutral,,1
+source,Entrepreneur India-positive,,1
+source,Evrim Ağacı-neutral,,1
+source,Fibre2Fashion-neutral,,1
+source,Filmfare-neutral,,1
+source,First India-neutral,,3
+source,Firstpost-neutral,,1
+source,Firstpost-positive,,1
+source,Forbes India-neutral,,2
+source,Forbes India-positive,,1
+source,Fox Story India-neutral,,1
+source,Free Press Journal-negative,,4
+source,Free Press Journal-neutral,,5
+source,Free Press Journal-positive,,2
+source,GIM International-positive,,1
+source,GKToday-negative,,1
+source,Garhwal Post-neutral,,1
+source,Garhwal Post-positive,,1
+source,GenZ Cricket-neutral,,1
+source,Getmyuni-neutral,,4
+source,Getmyuni-positive,,1
+source,Gizbot-positive,,2
+source,Gkbooks-neutral,,2
+source,Greater Kashmir-neutral,,1
+source,GujaratSamachar English-negative,,1
+source,Gulte-neutral,,1
+source,HP-neutral,,1
+source,Hauterrfly-neutral,,1
+source,Head Topics-neutral,,2
+source,Herzindagi-negative,,1
+source,HinduPost-neutral,,1
+source,Hindustan Times-negative,,1
+source,Hindustan Times-neutral,,9
+source,Hindustan Times-positive,,7
+source,IANS LIVE-positive,,1
+source,IE Education-neutral,,1
+source,IMPACT Magazine-neutral,,1
+source,INDIA New England News-negative,,1
+source,INDIA New England News-positive,,1
+source,Inc42-neutral,,1
+source,India Development Review-neutral,,1
+source,India Education Diary-neutral,,1
+source,India Education Diary-positive,,3
+source,India Shorts-neutral,,1
+source,India TV News-negative,,2
+source,India TV News-neutral,,1
+source,India TV News-positive,,1
+source,India Today-negative,,5
+source,India Today-neutral,,11
+source,India Today-positive,,10
+source,India Today NE-positive,,1
+source,IndiaMedToday-neutral,,1
+source,IndiaMedToday-positive,,1
+source,IndiaSportsHub-neutral,,1
+source,IndiaSportsHub-positive,,3
+source,Indian Masterminds-neutral,,1
+source,Indian Masterminds-positive,,1
+source,Indian Retailer-neutral,,4
+source,Indian Retailer-positive,,8
+source,Indian Startup Times-neutral,,2
+source,Indian Startup Times-positive,,2
+source,Indiatimes-neutral,,2
+source,Indulgexpress-positive,,2
+source,Inshorts-positive,,2
+source,InvestyWise-neutral,,1
+source,Island.lk-negative,,1
+source,Jagran Josh-neutral,,5
+source,Jagran Josh-positive,,2
+source,Jobaaj-negative,,1
+source,KalingaTV-positive,,1
+source,Kashmir Convener-negative,,1
+source,Kashmir Despatch-neutral,,1
+source,Kashmir Life-neutral,,1
+source,Khel Now-positive,,1
+source,Khmer Times-negative,,1
+source,KollegeApply-negative,,1
+source,KollegeApply-neutral,,1
+source,KollegeApply-positive,,2
+source,Lapaas Voice-neutral,,1
+source,LatestLY-negative,,1
+source,LatestLY-neutral,,12
+source,LatestLY-positive,,5
+source,Lifestyle Asia Hong Kong-neutral,,2
+source,Live Law-negative,,1
+source,MSN-negative,,8
+source,MSN-neutral,,16
+source,MSN-positive,,15
+source,Magnolia Reporter-positive,,1
+source,Maktoob Media-positive,,1
+source,Marksmen Daily-positive,,1
+source,Mathrubhumi English-negative,,1
+source,Mathrubhumi English-positive,,1
+source,Media Hindustan-neutral,,1
+source,MediaBrief-neutral,,2
+source,MediaBrief-positive,,1
+source,Medical Buyer-negative,,1
+source,Menafn-positive,,1
+source,Mid-day-neutral,,1
+source,MillenniumPost-negative,,1
+source,MillenniumPost-neutral,,1
+source,MillenniumPost-positive,,2
+source,Mint-negative,,1
+source,Mint-neutral,,2
+source,MokokchungTimes.com-neutral,,1
+source,Moneycontrol-negative,,4
+source,Moneycontrol-neutral,,1
+source,Moneycontrol-positive,,4
+source,MorungExpress-positive,,1
+source,My Mobile India-neutral,,1
+source,NDTV-negative,,4
+source,NDTV-neutral,,6
+source,NDTV-positive,,1
+source,NDTV Profit-negative,,1
+source,NDTV Profit-positive,,1
+source,NDTV Sports-negative,,1
+source,NE India Broadcast --positive,,1
+source,Nenow.in-positive,,1
+source,News Agency of Nigeria-negative,,1
+source,News India Times-positive,,1
+source,News On AIR-neutral,,2
+source,News On AIR-positive,,1
+source,News18-negative,,4
+source,News18-neutral,,8
+source,News18-positive,,8
+source,News9live-neutral,,2
+source,NewsBytes-positive,,1
+source,NewsX-neutral,,1
+source,NewsX-positive,,1
+source,Northeast Today-positive,,1
+source,Odisha TV-positive,,1
+source,Ommcom News-positive,,1
+source,Oneindia-negative,,1
+source,Oneindia-neutral,,1
+source,Oneindia-positive,,1
+source,OnlyMyHealth-neutral,,1
+source,OpenTools-positive,,1
+source,Outlook India-negative,,2
+source,Outlook India-neutral,,7
+source,Outlook India-positive,,2
+source,Outlook Respawn-neutral,,2
+source,PSU Connect-negative,,1
+source,Passionate In Marketing-neutral,,1
+source,Passionate In Marketing-positive,,3
+source,People Matters - HR News-positive,,1
+source,Pharmacy Business-positive,,1
+source,Physics Wallah-neutral,,1
+source,Pioneer Daily-neutral,,3
+source,Pioneer Daily-positive,,1
+source,Prag News-neutral,,1
+source,Pragativadi-positive,,1
+source,Press Information Bureau-positive,,1
+source,PressReader-neutral,,1
+source,Pressnote.in-positive,,1
+source,Pune Mirror-neutral,,1
+source,Republic World-negative,,3
+source,Republic World-neutral,,1
+source,Republic World-positive,,1
+source,Royal Australian College of General Practitioners (RACGP)-neutral,,1
+source,SSBCrack News-positive,,1
+source,SakshiPost-positive,,1
+source,Sarkaritel.com-neutral,,1
+source,Shiksha.com-neutral,,2
+source,Shiksha.com-positive,,1
+source,Siliconindia-neutral,,2
+source,Social News XYZ-negative,,1
+source,Social News XYZ-positive,,1
+source,Sortir à Paris-neutral,,1
+source,South China Morning Post-positive,,1
+source,SportsMint Media-positive,,1
+source,Sportskeeda-positive,,1
+source,Startup Pedia-positive,,1
+source,StartupNews.fyi-neutral,,2
+source,StartupNews.fyi-positive,,1
+source,Storyboard18-neutral,,2
+source,Storyboard18-positive,,3
+source,Swarajyamag-negative,,1
+source,Swarajyamag-neutral,,4
+source,Swarajyamag-positive,,5
+source,TICE News-neutral,,1
+source,TRIPURA STAR NEWS-negative,,1
+source,TRIPURA STAR NEWS-positive,,1
+source,Tech Observer Magazine-neutral,,2
+source,Tech in Asia-neutral,,1
+source,TechCrunch-neutral,,2
+source,TechStory-neutral,,1
+source,Techlusive-positive,,1
+source,TechnoSports Media Group-neutral,,2
+source,Telegraph India-negative,,2
+source,Telegraph India-neutral,,2
+source,The Asian Age-negative,,1
+source,The Avenue Mail-positive,,1
+source,The Bridge Chronicle-neutral,,1
+source,The CSR Journal-positive,,2
+source,The Daily Jagran-negative,,2
+source,The Daily Jagran-positive,,2
+source,The Economic Times-negative,,1
+source,The Economic Times-neutral,,1
+source,The Economic Times-positive,,7
+source,The Fiji Times-neutral,,1
+source,The Financial Express-negative,,1
+source,The Financial World-neutral,,1
+source,The Financial World-positive,,1
+source,The Global Kashmir-positive,,1
+source,The Hans India-negative,,2
+source,The Hans India-neutral,,8
+source,The Hans India-positive,,10
+source,The Hindu-neutral,,5
+source,The Hindu-positive,,2
+source,The Indian Express-negative,,12
+source,The Indian Express-neutral,,42
+source,The Indian Express-positive,,21
+source,The Law Advice-neutral,,1
+source,The Logical Indian-negative,,1
+source,The New Indian Express-negative,,2
+source,The New Indian Express-neutral,,5
+source,The New Indian Express-positive,,2
+source,The Shillong Times-negative,,1
+source,The Sikkim Chronicle-positive,,1
+source,The South First-negative,,1
+source,The Statesman-neutral,,2
+source,The Sunday Guardian-neutral,,1
+source,The Times of India-negative,,1
+source,The Times of India-neutral,,1
+source,The420.in-negative,,4
+source,TheCSRUniverse-neutral,,1
+source,TheHealthSite-negative,,1
+source,ThePrint-negative,,1
+source,ThePrint-neutral,,2
+source,ThePrint-positive,,1
+source,TheWire.in-positive,,1
+source,Times Now-negative,,1
+source,Times Now-neutral,,4
+source,Times of India-negative,,24
+source,Times of India-neutral,,24
+source,Times of India-positive,,16
+source,Trak.in-negative,,1
+source,Trak.in-neutral,,1
+source,Travel and Leisure Asia-positive,,1
+source,Tribune India-negative,,1
+source,Tribune India-neutral,,5
+source,Tribune India-positive,,2
+source,Udaipur Kiran-neutral,,2
+source,Udit Vani-positive,,1
+source,United News of Bangladesh-negative,,1
+source,United News of India (UNI)-positive,,3
+source,UrduPoint-positive,,1
+source,Vajiram & Ravi-neutral,,2
+source,Vajiram & Ravi-positive,,1
+source,Vogue India-neutral,,1
+source,WION-negative,,1
+source,WION-neutral,,1
+source,WION-positive,,1
+source,Weekly Voice-neutral,,1
+source,Whalesbook-neutral,,2
+source,Whalesbook-positive,,3
+source,YourStory.com-negative,,1
+source,YourStory.com-neutral,,1
+source,Youth Ki Awaaz-negative,,1
+source,Zee Business-negative,,2
+source,Zee Business-neutral,,9
+source,Zee Business-positive,,4
+source,Zee News-negative,,2
+source,Zee News-positive,,4
+source,Ziraat Times-positive,,1
+source,afaqs!-positive,,1
+source,bollywoodhelpline.com-negative,,35
+source,bollywoodhelpline.com-neutral,,11
+source,bollywoodhelpline.com-positive,,11
+source,businessnewsthisweek.com-neutral,,1
+source,convergence-now.com-positive,,1
+source,curlytales.com-neutral,,1
+source,curlytales.com-positive,,1
+source,domain-b.com-neutral,,1
+source,earlygame.in-positive,,1
+source,expresshealthcare.in-positive,,1
+source,facebook.com-neutral,,1
+source,femina.in-positive,,1
+source,financialexpress.com-negative,,1
+source,financialexpress.com-positive,,1
+source,findarticles.com-neutral,,1
+source,fundsforNGOs-neutral,,1
+source,globalgovernancenews.com-positive,,1
+source,hungamaexpress.com-neutral,,1
+source,india.com-negative,,1
+source,india.com-neutral,,1
+source,indiaherald.com-neutral,,1
+source,indiaherald.com-positive,,1
+source,indianews.com.au-positive,,2
+source,indica News-positive,,1
+source,informalnewz-neutral,,1
+source,informalnewz-positive,,1
+source,instagram.com-neutral,,3
+source,lehighvalleylive-positive,,1
+source,livemint.com-negative,,1
+source,livemint.com-neutral,,2
+source,lokmattimes.com-neutral,,1
+source,lokmattimes.com-positive,,1
+source,malaysiasun.com-positive,,1
+source,mezha.net-neutral,,1
+source,munsifdaily.com-neutral,,1
+source,myRepublica-negative,,1
+source,news24online.com-neutral,,3
+source,newsd.in-neutral,,1
+source,newskarnataka.com-negative,,1
+source,openPR.com-neutral,,1
+source,outlookbusiness.com-negative,,1
+source,prameyanews.com-positive,,1
+source,scanx.trade-neutral,,1
+source,scanx.trade-positive,,1
+source,statetimes.in-neutral,,1
+source,thehawk.in-negative,,3
+source,thehawk.in-neutral,,1
+source,thehawk.in-positive,,6
+source,thepatriot.in-positive,,1
+source,theweek.in-neutral,,1
+source,theweek.in-positive,,1
+source,uniquetimes.org-negative,,1
+source,uniquetimes.org-neutral,,1
+source,Букви-neutral,,1
+source,دزاير توب-positive,,1
