@@ -76,6 +76,7 @@ if __name__ == "__main__":
         dashboard_path = BASE_DIR / "dashboard.py"
         subprocess.run([sys.executable, "-m", "streamlit", "run", str(dashboard_path)], check=True)
     except KeyboardInterrupt:
-        print("\n👋 Stopped by user.")
+        print("\n Stopped by user.")
     except Exception as e:
         print(f"Error launching dashboard: {e}")
+
