@@ -18,10 +18,18 @@ def run_dynamic_bulk_ingest():
 
     # 2. SETUP PATHS
     # This keeps everything in your project structure
-    project_root = Path(__file__).resolve().parent.parent
+    project_root = Path("D:/Aditi/projects/Sentiment-Analysis-Data-Pipeline")
+    # src/ingest.py → parents[0] = src
+    # parents[1] = SENTIMENT-ANALYSIS-DATA-PIPELINE  ✅
+
     data_folder = project_root / "data" / "raw"
     file_path = data_folder / "raw_data.csv"
+
     data_folder.mkdir(parents=True, exist_ok=True)
+
+    print("Project root:", project_root)
+    print("Raw CSV will be saved at:", file_path)
+
 
     # 3. HIGH-DENSITY KEYWORDS
     keywords = [
@@ -34,8 +42,8 @@ def run_dynamic_bulk_ingest():
     
     all_new_data = []
     print(f"📡 --- India Data Pipeline ---")
-    print(f"📅 Window: {target_day} to {next_day}")
-    print(f"🚀 Starting fetch for {len(keywords)} shards...")
+    print(f"Window: {target_day} to {next_day}")
+    print(f"Starting fetch for {len(keywords)} shards...")
 
     for kw in keywords:
         # Construct dynamic query
@@ -80,13 +88,13 @@ def run_dynamic_bulk_ingest():
 
         try:
             final_df.to_csv(file_path, index=False, encoding='utf-8-sig')
-            print(f"\n✅ SUCCESS!")
-            print(f"📊 Total Dataset Size: {len(final_df)} rows")
-            print(f"📍 File updated: {file_path}")
+            print(f"\nSUCCESS!")
+            print(f"Total Dataset Size: {len(final_df)} rows")
+            print(f"File updated: {file_path}")
         except PermissionError:
-            print(f"\n❌ ERROR: Permission Denied. Please close 'raw_data.csv' in Excel.")
+            print(f"\nERROR: Permission Denied. Please close 'raw_data.csv' in Excel.")
     else:
-        print(f"❌ No new data found for {target_day}.")
+        print(f"No new data found for {target_day}.")
 
 if __name__ == "__main__":
     run_dynamic_bulk_ingest()

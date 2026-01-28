@@ -1,248 +1,326 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
-import time
 from pathlib import Path
+from datetime import timedelta
+import numpy as np
 
-# ==============================================================================
-# 0. CONFIGURATION & PAGE SETUP
-# ==============================================================================
+# =====================================================
+# PAGE CONFIG
+# =====================================================
 st.set_page_config(
-    page_title="Sentiment AI Dashboard",
-    page_icon="📊",
+    page_title="Gen-Z Pulse Dashboard",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    page_icon="📊"
 )
 
-# Light Theme & Glassmorphism CSS
+# =====================================================
+# LIGHT UI STYLE
+# =====================================================
 st.markdown("""
 <style>
-    /* Global Background */
-    .stApp {
-        background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
-        color: #31333F;
-    }
-    
-    /* Metrics Cards (Neomorphism/Glass) */
-    div[data-testid="metric-container"] {
-        background-color: rgba(255, 255, 255, 0.7);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        transition: transform 0.2s;
-        backdrop-filter: blur(10px);
-    }
-    div[data-testid="metric-container"]:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Headers */
-    h1, h2, h3 {
-        font-family: 'Inter', sans-serif;
-        font-weight: 700;
-        background: linear-gradient(90deg, #0052D4 0%, #4364F7 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    
-    /* Removal of default Streamlit padding */
-    .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
-    
-    /* Chart Containers */
-    .element-container {
-        border-radius: 10px;
-        overflow: hidden;
-        background-color: rgba(255, 255, 255, 0.5);
-        padding: 5px;
-    }
+body { background-color: #f5f7fb; }
+div[data-testid="stSidebar"] { background-color: #ffffff; }
 </style>
 """, unsafe_allow_html=True)
 
-# ==============================================================================
-# 1. DATA LOADING
-# ==============================================================================
-# Use relative paths consistent with project structure
-BASE_DIR = Path(__file__).parent
-METRICS_PATH = BASE_DIR / "data" / "analysis" / "dashboard_metrics.csv"
-INSIGHTS_PATH = BASE_DIR / "data" / "analysis" / "dashboard_insights.csv"
-RAW_DATA_PATH = BASE_DIR / "data" / "processed" / "cleaned_data.csv"
+# =====================================================
+# PATH CONFIG
+# =====================================================
+BASE_DIR = Path(__file__).resolve().parent
 
-@st.cache_data(ttl=60)  # Cache requires refresh every 60s
-def load_data():
-    try:
-        metrics_df = pd.read_csv(METRICS_PATH)
-        insights_df = pd.read_csv(INSIGHTS_PATH)
-        return metrics_df, insights_df
-    except FileNotFoundError:
-        return None, None
+DATA_FILE     = BASE_DIR / "src" / "send" / "tweets_with_sentiment.csv"
+METRICS_FILE  = BASE_DIR / "data" / "analysis" / "dashboard_metrics.csv"
+INSIGHT_FILE  = BASE_DIR / "data" / "analysis" / "dashboard_insights.csv"
+STATE_FILE    = BASE_DIR / "data" / "analysis" / "genz_state.csv"
 
-metrics_df, insights_df = load_data()
+# =====================================================
+# LOAD DATA SAFELY
+# =====================================================
+def load_csv(path, name):
+    if not path.exists():
+        st.error(f"❌ Missing file: {name}")
+        st.stop()
+    return pd.read_csv(path)
 
-# ==============================================================================
-# 2. HEADER & KPI SECTION
-# ==============================================================================
-st.title("📡 Sentiment Analysis Dashboard")
-st.markdown("Real-time analysis of news & social trends affecting Indian Youth.")
+tweets_df  = load_csv(DATA_FILE, "tweets_with_sentiment.csv")
+metrics_df = load_csv(METRICS_FILE, "dashboard_metrics.csv")
+insight_df = load_csv(INSIGHT_FILE, "dashboard_insights.csv")
+state_df   = load_csv(STATE_FILE, "genz_state.csv")
 
-if metrics_df is None or insights_df is None:
-    st.error("⚠️ Data files not found. Please run the analysis pipeline first!")
-    st.stop()
+# Cleaning
+tweets_df["timestamp"] = pd.to_datetime(tweets_df["timestamp"], errors="coerce")
+tweets_df = tweets_df.dropna(subset=["timestamp"])
 
-# Helper to extract KPI value
-def get_kpi(label):
-    val = insights_df[insights_df['metric'] == label]['value'].values
-    return val[0] if len(val) > 0 else "N/A"
+state_df["timestamp"] = pd.to_datetime(state_df["timestamp"], errors="coerce")
+state_df = state_df.dropna(subset=["timestamp"]).sort_values("timestamp")
 
-# KPI ROW
-kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+# =====================================================
+# HEADER
+# =====================================================
+st.title("GenZ Sentiment Pipeline and Analytics Dashboard")
+st.caption("Integrated real-time analytics of youth sentiment, mindset growth, media influence and engagement.")
 
-with kpi1:
-    st.metric("Total Analyzed", get_kpi("Total Tweets"), delta=None)
+# =====================================================
+# SIDEBAR FILTERS
+# =====================================================
+st.sidebar.header("Dashboard Filters")
 
-with kpi2:
-    sentiment_label = "Positive %"
-    st.metric("Positivity Index", get_kpi("Positive %"), 
-              delta=f"{get_kpi('Polarization Index')} Polarization")
+time_window = st.sidebar.radio(
+    "📅 Time Window",
+    ["Last 2 Days", "Last 7 Days"],
+    horizontal=True
+)
 
-with kpi3:
-    st.metric("Trending Topic", get_kpi("Trending Topic"))
+topics = st.sidebar.multiselect("Topic", sorted(tweets_df["topic"].dropna().unique()))
+sources = st.sidebar.multiselect("Source", sorted(tweets_df["source"].dropna().unique()))
+sentiments = st.sidebar.multiselect("Sentiment", sorted(tweets_df["sentiment_label"].dropna().unique()))
 
-with kpi4:
-    spike = get_kpi("Spike Alert")
-    delta_color = "inverse" if "Alert" in str(spike) or "Spike" in str(spike) else "normal"
-    st.metric("System Status", "Active", delta=spike, delta_color=delta_color)
+st.sidebar.header("Project Overview")
+st.sidebar.caption("Gen-Z Pulse • Data Engineering + Data Analytics Project")
+st.sidebar.markdown("""
+This project creates an end-to-end data pipeline for analyzing Gen-Z trends.
+It ingests social media data, applying sentiment analysis and topic classification.
+Key behavioral metrics like mindset growth and emotional stability are tracked.
+The system aggregates insights on media influence and engagement patterns.
+This dashboard visualizes these metrics, allowing real-time exploration.
+Users can filter by time window, topic, and source to gain deep insights.
+Designed to monitor the pulse of Gen-Z, it bridges raw data to actionable intelligence.
+""")
+
+
+# =====================================================
+# APPLY TIME FILTER ON STATE
+# =====================================================
+latest_time = state_df["timestamp"].max()
+days = 2 if time_window == "Last 2 Days" else 7
+cutoff = latest_time - timedelta(days=days)
+state_df = state_df[state_df["timestamp"] >= cutoff]
+
+# =====================================================
+# APPLY FILTERS ON TWEETS
+# =====================================================
+df = tweets_df.copy()
+
+if topics:
+    df = df[df["topic"].isin(topics)]
+if sources:
+    df = df[df["source"].isin(sources)]
+if sentiments:
+    df = df[df["sentiment_label"].isin(sentiments)]
+
+# =====================================================
+# KPI CARDS (FROM dashboard_insights.csv)
+# =====================================================
+st.subheader("Key Behavioral Indicators")
+
+kpi_cols = st.columns(5)
+for i, row in insight_df.iterrows():
+    kpi_cols[i % 5].metric(row["metric"], row["value"])
 
 st.divider()
 
-# ==============================================================================
-# 3. VISUALIZATION ROW 1 (Sentiment)
-# ==============================================================================
-col1, col2 = st.columns([1, 2])
+# =====================================================
+# 🆕 KPI DISTRIBUTION BAR (Insights File)
+# =====================================================
+st.subheader("KPI Value Distribution")
 
-# A. Sentiment Pie Chart
-with col1:
-    st.subheader("Sentiment Distribution")
-    sent_data = metrics_df[metrics_df['metric_type'] == 'sentiment']
-    
-    fig_donut = px.pie(
-        sent_data, 
-        names='dimension', 
-        values='count', 
-        color='dimension',
-        color_discrete_map={
-            "positive": "#00CC96",
-            "negative": "#EF553B",
-            "neutral": "#636EFA"
-        },
-        hole=0.6
-    )
-    fig_donut.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font={'color': '#333333'},
-        showlegend=False,
-        margin=dict(t=0, b=0, l=0, r=0),
-        annotations=[dict(text='AI<br>Score', x=0.5, y=0.5, font_size=20, showarrow=False, font_color='#333333')]
-    )
-    st.plotly_chart(fig_donut, width='stretch')
+kpi_numeric = insight_df.copy()
+kpi_numeric["value"] = pd.to_numeric(kpi_numeric["value"], errors="coerce")
+kpi_numeric = kpi_numeric.dropna()
 
-# B. Sentiment by Topic Bar Chart
-with col2:
-    st.subheader("Sentiment Intensity by Topic")
-    topic_data = metrics_df[metrics_df['metric_type'] == 'topic'].sort_values(by="value", ascending=True)
-    
-    fig_bar = px.bar(
-        topic_data, 
-        y='dimension', 
-        x='value', 
-        orientation='h',
-        color='value',
-        color_continuous_scale=['#EF553B', '#636EFA', '#00CC96'],
-        text='value'
-    )
-    
-    fig_bar.update_layout(
-        xaxis_title="Avg Sentiment Score (-1 to +1)", 
-        yaxis_title=None,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font={'color': '#333333'},
-        xaxis=dict(showgrid=True, gridcolor='rgba(0,0,0,0.1)'),
-        margin=dict(l=0, r=0, t=0, b=0)
-    )
-    st.plotly_chart(fig_bar, width='stretch')
+fig_kpi_dist = px.bar(
+    kpi_numeric,
+    x="metric",
+    y="value",
+    color="value",
+    title="KPI Strength Comparison",
+    template="plotly_white",
+    color_continuous_scale="Blues"
+)
 
-# ==============================================================================
-# 4. VISUALIZATION ROW 2 (Time & Source)
-# ==============================================================================
-col3, col4 = st.columns(2)
+st.plotly_chart(fig_kpi_dist, use_container_width=True)
 
-# C. Hourly Activity Area Chart
-with col3:
-    st.subheader("24h Activity Volume")
-    hour_data = metrics_df[metrics_df['metric_type'] == 'hour'].sort_values(by="dimension")
-    
-    fig_area = px.area(
-        hour_data, 
-        x='dimension', 
-        y='count',
-        markers=True,
-        line_shape='spline'
-    )
-    # CORRECTED fillcolor (prev. fill_color)
-    fig_area.update_traces(line_color='#AB63FA', fillcolor='rgba(171, 99, 250, 0.2)')
-    fig_area.update_layout(
-        xaxis_title="Hour of Day",
-        yaxis_title="Volume",
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font={'color': '#333333'},
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor='rgba(0,0,0,0.1)'),
-        margin=dict(l=0, r=0, t=10, b=0)
-    )
-    st.plotly_chart(fig_area, width='stretch')
+# =====================================================
+# 🆕 KPI CONTRIBUTION DONUT
+# =====================================================
+fig_kpi_donut = px.pie(
+    kpi_numeric,
+    names="metric",
+    values="value",
+    hole=0.55,
+    title="KPI Contribution Distribution",
+    template="plotly_white"
+)
 
-# D. Source Treemap
-with col4:
-    st.subheader("News Source Impact")
-    source_data = metrics_df[metrics_df['metric_type'] == 'source']
-    # Parse "Source-Sentiment" string back to two columns
-    source_data[['Source', 'SentLabel']] = source_data['dimension'].str.split('-', n=1, expand=True)
-    
-    fig_tree = px.treemap(
-        source_data,
-        path=[px.Constant("All Sources"), 'Source', 'SentLabel'],
-        values='count',
-        color='SentLabel',
-        color_discrete_map={
-            "positive": "#00CC96",
-            "negative": "#EF553B",
-            "neutral": "#636EFA",
-            "(?)": "#333333"
-        }
-    )
-    fig_tree.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=0, l=0, r=0, b=0)
-    )
-    st.plotly_chart(fig_tree, width='stretch')
+st.plotly_chart(fig_kpi_donut, use_container_width=True)
 
-# ==============================================================================
-# 5. FOOTER & REFRESH
-# ==============================================================================
-st.markdown("---")
-col_f1, col_f2 = st.columns([8, 2])
-with col_f1:
-    st.caption(f"Last Updated: {time.strftime('%Y-%m-%d %H:%M:%S')} | Data Source: Google News RSS")
-with col_f2:
-    if st.button("🔄 Refresh Data"):
-        st.cache_data.clear()
-        st.rerun()
+# =====================================================
+# ROW 1 — SENTIMENT ANALYSIS (Raw Data)
+# =====================================================
+c1, c2 = st.columns(2)
+
+sentiment_dist = df["sentiment_label"].value_counts().reset_index()
+sentiment_dist.columns = ["sentiment", "count"]
+
+fig_sent = px.pie(
+    sentiment_dist,
+    names="sentiment",
+    values="count",
+    hole=0.45,
+    title="Sentiment Distribution",
+    template="plotly_white"
+)
+
+c1.plotly_chart(fig_sent, use_container_width=True)
+
+topic_score = df.groupby("topic")["sentiment_score"].mean().reset_index()
+
+fig_topic = px.bar(
+    topic_score.sort_values("sentiment_score"),
+    x="sentiment_score",
+    y="topic",
+    orientation="h",
+    title="Sentiment Intensity by Topic",
+    color="sentiment_score",
+    template="plotly_white",
+    color_continuous_scale="tealgrn"
+)
+
+c2.plotly_chart(fig_topic, use_container_width=True)
+
+# =====================================================
+# ROW 2 — ENGAGEMENT + SOURCE ANALYSIS
+# =====================================================
+c3, c4 = st.columns(2)
+
+df["hour"] = df["timestamp"].dt.hour
+hourly = df.groupby("hour").size().reset_index(name="count")
+
+fig_hour = px.area(
+    hourly,
+    x="hour",
+    y="count",
+    title="24-Hour Engagement Pattern",
+    template="plotly_white"
+)
+
+c3.plotly_chart(fig_hour, use_container_width=True)
+
+source_sent = df.groupby(["source", "sentiment_label"]).size().reset_index(name="count")
+
+fig_source = px.treemap(
+    source_sent,
+    path=["source", "sentiment_label"],
+    values="count",
+    title="Media Source Influence",
+    template="plotly_white"
+)
+
+c4.plotly_chart(fig_source, use_container_width=True)
+
+# =====================================================
+# 🆕 SOURCE SENTIMENT STACKED BAR
+# =====================================================
+st.subheader("Media Sentiment Distribution")
+
+source_metrics = metrics_df[metrics_df["metric_type"] == "source"].copy()
+split_cols = source_metrics["dimension"].str.rsplit("-", n=1, expand=True)
+
+source_metrics["source"] = split_cols[0]
+source_metrics["sentiment"] = split_cols[1]
+
+
+fig_source_stack = px.bar(
+    source_metrics,
+    x="source",
+    y="count",
+    color="sentiment",
+    title="Source vs Sentiment Comparison",
+    template="plotly_white"
+)
+
+st.plotly_chart(fig_source_stack, use_container_width=True)
+
+# =====================================================
+# ROW 3 — BEHAVIORAL TRENDS (genz_state.csv)
+# =====================================================
+st.subheader("Gen-Z Behavioral Intelligence Trends")
+
+trend_cols = [
+    "mind_growth",
+    "education_awareness",
+    "political_maturity",
+    "emotional_stability",
+    "leadership_voice"
+]
+
+trend_df = state_df[["timestamp"] + trend_cols]
+
+fig_trend = px.line(
+    trend_df,
+    x="timestamp",
+    y=trend_cols,
+    markers=True,
+    title="Behavior Evolution (Selected Period)",
+    template="plotly_white"
+)
+
+fig_trend.update_layout(hovermode="x unified")
+
+st.plotly_chart(fig_trend, use_container_width=True)
+
+# =====================================================
+# 🆕 SENTIMENT VOLUME COMPARISON (dashboard_metrics.csv)
+# =====================================================
+st.subheader("Sentiment Volume Comparison")
+
+sentiment_metrics = metrics_df[metrics_df["metric_type"] == "sentiment"]
+
+fig_sent_vol = px.bar(
+    sentiment_metrics,
+    x="dimension",
+    y="count",
+    color="dimension",
+    title="Sentiment Distribution Volume",
+    template="plotly_white"
+)
+
+st.plotly_chart(fig_sent_vol, use_container_width=True)
+
+# =====================================================
+# 🆕 TOPIC POPULARITY RANKING
+# =====================================================
+st.subheader("Topic Engagement Ranking")
+
+topic_metrics = metrics_df[metrics_df["metric_type"] == "topic_volume"]
+
+fig_topic_rank = px.bar(
+    topic_metrics.sort_values("count"),
+    x="count",
+    y="dimension",
+    orientation="h",
+    color="count",
+    title="Most Discussed Topics",
+    template="plotly_white",
+    color_continuous_scale="tealgrn"
+)
+
+st.plotly_chart(fig_topic_rank, use_container_width=True)
+
+# =====================================================
+# ROW 4 — METRICS TABLE (dashboard_metrics.csv)
+# =====================================================
+st.subheader("Aggregated Metrics Explorer")
+st.dataframe(metrics_df, width="stretch")
+
+# =====================================================
+# RAW DATA VIEW
+# =====================================================
+with st.expander("View Raw Tweet Data"):
+    st.dataframe(df.head(300), width="stretch")
+
+# =====================================================
+# FOOTER
+# =====================================================
+st.caption("Gen-Z Pulse • Data Engineering + Data Analytics Project")
