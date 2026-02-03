@@ -4,6 +4,8 @@ import plotly.express as px
 from pathlib import Path
 from datetime import timedelta
 import numpy as np
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
 
 # =====================================================
 # PAGE CONFIG
@@ -11,7 +13,7 @@ import numpy as np
 st.set_page_config(
     page_title="Gen-Z Pulse Dashboard",
     layout="wide",
-    page_icon="📊"
+    page_icon=""
 )
 
 # =====================================================
@@ -68,7 +70,7 @@ st.sidebar.header("Dashboard Filters")
 
 time_window = st.sidebar.radio(
     "📅 Time Window",
-    ["Last 2 Days", "Last 7 Days"],
+    ["Last 2 Days"],
     horizontal=True
 )
 
@@ -93,7 +95,7 @@ Designed to monitor the pulse of Gen-Z, it bridges raw data to actionable intell
 # APPLY TIME FILTER ON STATE
 # =====================================================
 latest_time = state_df["timestamp"].max()
-days = 2 if time_window == "Last 2 Days" else 7
+days = 2
 cutoff = latest_time - timedelta(days=days)
 state_df = state_df[state_df["timestamp"] >= cutoff]
 
@@ -242,6 +244,159 @@ fig_source_stack = px.bar(
 
 st.plotly_chart(fig_source_stack, use_container_width=True)
 
+# =====================================================
+# NEW: WORD CLOUD SECTION
+# =====================================================
+from collections import Counter
+import pandas as pd
+
+# --- Helper Function: Intra-day Trend Analysis ---
+def get_word_trends(current_df, previous_df, stopwords):
+    def get_counts_and_sources(df):
+        if df is None or df.empty:
+            return Counter(), {}
+        
+        word_counts = Counter()
+        word_to_source = {} 
+        
+        # Keywords from your ingest script
+        valid_topics = [
+            "GenZ India", "Indian Youth", "Student Life India", "Instagram India", 
+            "Twitter India trends", "India Tech Startups", "UPSC Aspirants", 
+            "CBSE Exams", "Indian Gamers", "Bollywood GenZ", "India Fashion Trends",
+            "Gig Economy India", "Digital India", "India Entrepreneurship", 
+            "Mental Health India", "College Festivals India", "India Skill Development"
+        ]
+        
+        for _, row in df.iterrows():
+            # Uses 'topic' as defined in your ingest script
+            raw_topic = row.get('topic', 'Unknown')
+            topic = raw_topic if raw_topic in valid_topics else "Other"
+            
+            text = str(row["text"]).lower()
+            # Filter: Alpha only, not stopword, length > 3
+            words = [w for w in text.split() if w.isalpha() and w not in stopwords and len(w) > 3]
+            
+            for w in words:
+                word_counts[w] += 1
+                if w not in word_to_source:
+                    word_to_source[w] = Counter()
+                word_to_source[w][topic] += 1
+        
+        top_sources = {w: cats.most_common(1)[0][0] for w, cats in word_to_source.items()}
+        return word_counts, top_sources
+
+    curr_counts, curr_sources = get_counts_and_sources(current_df)
+    prev_counts, _ = get_counts_and_sources(previous_df)
+    
+    trends = []
+    for word, count in curr_counts.items():
+        prev_count = prev_counts.get(word, 0)
+        diff = count - prev_count
+        
+        if diff > 0:
+            growth_pct = (diff / prev_count * 100) if prev_count > 0 else 100.0
+            source = curr_sources.get(word, "General")
+            
+            if source != "Other":
+                trends.append({
+                    "Keyword": word.title(), 
+                    "Topic Source": source,
+                    "Volume": count, 
+                    "Growth": diff,
+                    "Growth %": round(growth_pct, 1)
+                })
+    
+    # SAFETY: Return structured empty DF if no trends found
+    if not trends:
+        return pd.DataFrame(columns=["Keyword", "Topic Source", "Volume", "Growth", "Growth %"])
+            
+    return pd.DataFrame(trends).sort_values(by="Growth", ascending=False)
+
+# --- UI Layout ---
+st.divider()
+st.subheader("Emerging Themes & Keywords")
+
+# 1. STOPWORDS (Filtering out noise from headlines)
+noise_words = {
+    "India", "Indian", "GenZ", "Gen", "Pulse", "Headline", "News", "Video", "says", "will",
+    "board", "music", "video", "youtube", "social", "media", "link", "post", "today", 
+    "latest", "update", "watch", "click", "read", "more", "back", "told", "even", "made", "shared"
+}
+custom_stopwords = set(STOPWORDS).union(noise_words)
+
+# Assuming 'df' is loaded from your tweets_with_sentiment.csv
+if 'df' in locals() and not df.empty:
+    
+    # 2. WORD CLOUD
+    text_data = " ".join(headline for headline in df["text"].dropna().astype(str))
+    
+    if text_data.strip():
+        wc = WordCloud(
+            background_color="#f5f7fb", 
+            max_words=150,
+            width=1600,
+            height=800,
+            stopwords=custom_stopwords,
+            colormap="viridis", 
+            collocations=True
+        ).generate(text_data)
+
+        fig_wc, ax = plt.subplots(figsize=(20, 10))
+        ax.imshow(wc, interpolation='bilinear')
+        ax.axis("off")
+        fig_wc.patch.set_facecolor('#f5f7fb')
+        st.pyplot(fig_wc)
+
+    # 3. TREND COMPARISON (Splitting the 24hr window)
+    st.subheader("📈 Intra-Day Trending Topics")
+    st.caption("Comparing the most recent 8 hours against the rest of the 24-hour fetch.")
+
+    if "timestamp" in df.columns:
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        latest_time = df["timestamp"].max()
+        
+        # Split: Recent 8 hours vs Previous 16 hours
+        split_time = latest_time - pd.Timedelta(hours=8)
+        
+        recent_data = df[df["timestamp"] > split_time]
+        older_data = df[df["timestamp"] <= split_time]
+
+        trend_df = get_word_trends(recent_data, older_data, custom_stopwords)
+
+        if not trend_df.empty:
+            # Display Top 3 Metrics
+            cols = st.columns(3)
+            for idx in range(min(3, len(trend_df))):
+                row = trend_df.iloc[idx]
+                cols[idx].metric(
+                    label=f"Spiking: {row['Keyword']}", 
+                    value=f"{row['Volume']} mentions", 
+                    delta=row['Topic Source'],
+                    delta_color="normal" 
+                )
+            
+            # --- UPDATED DATAFRAME WITH PROGRESS BAR ---
+            with st.expander("📊 Detailed Keyword Analysis (8hr Window)"):
+                st.dataframe(
+                    trend_df.head(15), 
+                    use_container_width=True, 
+                    hide_index=True,
+                    column_config={
+                        "Keyword": st.column_config.TextColumn("Trending Keyword"),
+                        "Topic Source": st.column_config.TextColumn("Origin Topic 🏷️"),
+                        "Volume": st.column_config.ProgressColumn(
+                            "Today's Count",
+                            help="Number of mentions in the recent window",
+                            format="%d",
+                            min_value=0,
+                            max_value=int(trend_df["Volume"].max()) # Scales bar to max hits
+                        ),
+                        "Growth %": st.column_config.NumberColumn("Growth Rate", format="%d%%")
+                    }
+                )
+        else:
+            st.info("No significant keyword spikes detected within this 24-hour window.")
 # =====================================================
 # ROW 3 — BEHAVIORAL TRENDS (genz_state.csv)
 # =====================================================

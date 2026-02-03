@@ -18,7 +18,7 @@ def run_dynamic_bulk_ingest():
 
     # 2. SETUP PATHS
     # This keeps everything in your project structure
-    project_root = Path("D:/Aditi/projects/Sentiment-Analysis-Data-Pipeline")
+    project_root = Path("D:/Sentiment-Analysis-Data-Pipeline/Sentiment-Analysis-Data-Pipeline")
     data_folder = project_root / "data" / "raw"
     file_path = data_folder / "raw_data.csv"
     data_folder.mkdir(parents=True, exist_ok=True)

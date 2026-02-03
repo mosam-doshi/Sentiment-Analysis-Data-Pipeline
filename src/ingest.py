@@ -18,9 +18,9 @@ def run_dynamic_bulk_ingest():
 
     # 2. SETUP PATHS
     # This keeps everything in your project structure
-    project_root = Path("D:/Aditi/projects/Sentiment-Analysis-Data-Pipeline")
+    project_root = Path("D:/Sentiment-Analysis-Data-Pipeline/Sentiment-Analysis-Data-Pipeline")
     # src/ingest.py → parents[0] = src
-    # parents[1] = SENTIMENT-ANALYSIS-DATA-PIPELINE  ✅
+    # parents[1] = SENTIMENT-ANALYSIS-DATA-PIPELINE  
 
     data_folder = project_root / "data" / "raw"
     file_path = data_folder / "raw_data.csv"
@@ -41,7 +41,7 @@ def run_dynamic_bulk_ingest():
     ]
     
     all_new_data = []
-    print(f"📡 --- India Data Pipeline ---")
+    print(f" --- India Data Pipeline ---")
     print(f"Window: {target_day} to {next_day}")
     print(f"Starting fetch for {len(keywords)} shards...")
 
@@ -51,7 +51,7 @@ def run_dynamic_bulk_ingest():
         encoded_query = quote(query_str)
         rss_url = f"https://news.google.com/rss/search?q={encoded_query}&hl=en-IN&gl=IN&ceid=IN:en"
         
-        print(f"🔍 Fetching {kw}...", end=" ", flush=True)
+        print(f"Fetching {kw}...", end=" ", flush=True)
         
         # User-Agent to prevent bot detection
         feed = feedparser.parse(rss_url, agent="Mozilla/5.0")
@@ -75,26 +75,25 @@ def run_dynamic_bulk_ingest():
         time.sleep(random.uniform(1.2, 2.5))
 
     # 4. SAVE & DEDUPLICATE (Append Mode)
+    # 4. SAVE (Overwrite Mode)
     if all_new_data:
-        new_df = pd.DataFrame(all_new_data)
+        # Create DataFrame from the fresh fetch
+        final_df = pd.DataFrame(all_new_data)
         
-        # If the file already exists, we combine and remove duplicates across all days
-        if file_path.exists():
-            existing_df = pd.read_csv(file_path, encoding='utf-8-sig')
-            combined_df = pd.concat([existing_df, new_df], ignore_index=True)
-            final_df = combined_df.drop_duplicates(subset=['id'])
-        else:
-            final_df = new_df.drop_duplicates(subset=['id'])
+        # Remove duplicates within the current batch (e.g., same news in different shards)
+        final_df = final_df.drop_duplicates(subset=['id'])
 
         try:
+            # default mode is 'w' which overwrites the file
             final_df.to_csv(file_path, index=False, encoding='utf-8-sig')
+            
             print(f"\nSUCCESS!")
-            print(f"Total Dataset Size: {len(final_df)} rows")
-            print(f"File updated: {file_path}")
+            print(f"Fresh Dataset Size: {len(final_df)} rows")
+            print(f"File overwritten: {file_path}")
         except PermissionError:
             print(f"\nERROR: Permission Denied. Please close 'raw_data.csv' in Excel.")
     else:
-        print(f"No new data found for {target_day}.")
+        print(f"No new data found for {target_day}. File was not changed.")
 
 if __name__ == "__main__":
     run_dynamic_bulk_ingest()
